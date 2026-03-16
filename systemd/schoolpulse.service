@@ -1,0 +1,15 @@
+[Unit]
+Description=SchoolPulse Dashboard
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/schoolpulse
+ExecStart=/home/notmint/.nvm/versions/node/v20.19.5/bin/node /opt/schoolpulse/server.js
+Restart=always
+RestartSec=5
+User=notmint
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+{
+  "name": "schoolpulse",
+  "version": "1.0.0",
+  "description": "District IT status dashboard for schools",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["school", "dashboard", "status", "it", "k12"],
+  "author": "OpenAI",
+  "license": "MIT"
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "id": "district",
+    "name": "District"
+  },
+  {
+    "id": "hs",
+    "name": "High School"
+  },
+  {
+    "id": "jh",
+    "name": "Junior High"
+  },
+  {
+    "id": "elem",
+    "name": "Elementary"
+  }
+]

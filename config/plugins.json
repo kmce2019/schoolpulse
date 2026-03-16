@@ -1,0 +1,46 @@
+{
+  "plugins": [
+    {
+      "id": "internet",
+      "name": "Internet",
+      "path": "./plugins/internet.js",
+      "enabled": true
+    },
+    {
+      "id": "wifi",
+      "name": "WiFi",
+      "path": "./plugins/unifi.js",
+      "enabled": true
+    },
+    {
+      "id": "google",
+      "name": "Google Services",
+      "path": "./plugins/google.js",
+      "enabled": true
+    },
+    {
+      "id": "sis",
+      "name": "SIS",
+      "path": "./plugins/sis.js",
+      "enabled": false
+    },
+    {
+      "id": "phones",
+      "name": "Phones",
+      "path": "./plugins/threecx.js",
+      "enabled": true
+    },
+    {
+      "id": "printers",
+      "name": "Printer Queues",
+      "path": "./plugins/printers.js",
+      "enabled": true
+    },
+    {
+      "id": "helpdesk",
+      "name": "Helpdesk Queue",
+      "path": "./plugins/neetodesk.js",
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+.env
+node_modules
+*.log
+data/history.json
+data/announcements.json
+

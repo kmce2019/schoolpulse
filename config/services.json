@@ -1,0 +1,71 @@
+{
+  "services": [
+    {
+      "id": "internet",
+      "name": "Internet",
+      "enabled": true,
+      "campuses": [
+        "district"
+      ],
+      "category": "service"
+    },
+    {
+      "id": "wifi",
+      "name": "WiFi",
+      "enabled": true,
+      "campuses": [
+        "hs",
+        "jh",
+        "elem"
+      ],
+      "category": "service"
+    },
+    {
+      "id": "google",
+      "name": "Google Services",
+      "enabled": true,
+      "campuses": [
+        "district"
+      ],
+      "category": "service"
+    },
+    {
+      "id": "sis",
+      "name": "SIS",
+      "enabled": false,
+      "campuses": [
+        "district"
+      ],
+      "category": "service"
+    },
+    {
+      "id": "phones",
+      "name": "Phones",
+      "enabled": true,
+      "campuses": [
+        "district"
+      ],
+      "category": "service"
+    },
+    {
+      "id": "printers",
+      "name": "Printer Queues",
+      "enabled": true,
+      "campuses": [
+        "hs",
+        "jh",
+        "elem"
+      ],
+      "category": "service"
+    },
+    {
+      "id": "helpdesk",
+      "name": "Helpdesk Queue",
+      "enabled": true,
+      "campuses": [
+        "district"
+      ],
+      "category": "queue"
+    }
+  ]
+}

@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SchoolPulse</title>
+  <style>
+    :root {
+      --accent: #f97316; --accent2: #fb7185; --surface: rgba(255,255,255,.82); --surface-tint: #f8fafc;
+      --text: #0f172a; --muted: #64748b; --bg1: #eef2ff; --bg2: #f8fafc; --bg3: #ffe4e6;
+      --green: #34c759; --yellow: #f59e0b; --red: #ff3b30; --watch: #6366f1;
+      --shadow: 0 18px 50px rgba(15, 23, 42, .12); --border: rgba(255,255,255,.55); --radius: 28px;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", Arial, sans-serif; color:var(--text);
+      background: radial-gradient(circle at top left, rgba(255,255,255,.85), transparent 30%), radial-gradient(circle at top right, color-mix(in srgb, var(--accent2) 18%, white), transparent 32%), linear-gradient(160deg, var(--bg1), var(--bg2) 58%, var(--bg3)); background-attachment: fixed; }
+    .wrap{max-width:1460px;margin:0 auto;padding:24px;display:grid;gap:18px;}
+    .panel{background:linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.62));backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr);gap:18px;padding:18px;align-items:stretch}
+    .hero-main,.hero-side{padding:12px}.hero-brand{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+    .logo-wrap{width:70px;height:70px;display:grid;place-items:center;background:linear-gradient(135deg,color-mix(in srgb, var(--accent) 22%, white), color-mix(in srgb, var(--accent2) 18%, white));border:1px solid rgba(255,255,255,.5);box-shadow: inset 0 1px 1px rgba(255,255,255,.45), 0 10px 24px rgba(15,23,42,.10);overflow:hidden;flex:0 0 auto}.logo-wrap.rounded{border-radius:20px}.logo-wrap.circle{border-radius:999px}.logo-wrap.square{border-radius:8px}.logo-wrap img{width:100%;height:100%;object-fit:cover}.logo-fallback{font-weight:800;font-size:1.2rem;color:white}
+    .eyebrow{color:var(--muted);font-size:.85rem;letter-spacing:.08em;text-transform:uppercase} h1{margin:4px 0 8px;font-size:clamp(2rem,4vw,4rem);line-height:.98;letter-spacing:-.04em} p{color:var(--muted);margin:0}
+    .hero-side{display:grid;gap:14px}.overall{padding:20px;border-radius:24px;background:linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,.35));border:1px solid rgba(255,255,255,.55);display:grid;gap:12px}.overall-badge{display:flex;align-items:center;justify-content:space-between}.status-pill{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;font-weight:700;font-size:.92rem}.status-pill.green{background:rgba(52,199,89,.12);color:#147a2d}.status-pill.yellow{background:rgba(245,158,11,.14);color:#9a6700}.status-pill.red{background:rgba(255,59,48,.12);color:#a42318}
+    .score{display:flex;align-items:center;gap:16px}.score-ring{width:104px;height:104px;border-radius:999px;display:grid;place-items:center;background:conic-gradient(var(--accent) calc(var(--score) * 1%), rgba(255,255,255,.5) 0);padding:8px}.score-ring-inner{width:100%;height:100%;border-radius:999px;background:rgba(255,255,255,.82);display:grid;place-items:center;text-align:center}.score-number{font-size:1.7rem;font-weight:800;line-height:1}.score-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+    .hero-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}.stat{padding:16px;border-radius:22px;background:rgba(255,255,255,.52);border:1px solid rgba(255,255,255,.55)}.stat .v{font-size:1.65rem;font-weight:800;margin-top:4px}
+    .campus-tabs{display:flex;gap:10px;flex-wrap:wrap}.tab{border:none;background:rgba(255,255,255,.65);padding:10px 14px;border-radius:999px;font-weight:700;color:var(--muted);cursor:pointer}.tab.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white}
+    .incident{padding:16px 18px;display:none;align-items:center;justify-content:space-between;gap:12px}.incident.show{display:flex}.incident-main{display:grid;gap:6px}.incident-title{font-weight:800;font-size:1.05rem}.incident-meta{font-size:.92rem;color:var(--muted)}.incident-level{padding:8px 12px;border-radius:999px;font-weight:800;font-size:.85rem}.incident-level.critical{background:rgba(255,59,48,.12);color:#a42318}.incident-level.warning{background:rgba(245,158,11,.14);color:#9a6700}.incident-level.watch{background:rgba(99,102,241,.12);color:#3730a3}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{padding:18px;border-radius:24px;display:grid;gap:12px}.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.card-title{font-size:1.1rem;font-weight:800}.badge{padding:8px 12px;border-radius:999px;font-weight:800;font-size:.82rem}.badge.green{background:rgba(52,199,89,.12);color:#147a2d}.badge.yellow{background:rgba(245,158,11,.14);color:#9a6700}.badge.red{background:rgba(255,59,48,.12);color:#a42318}
+    .meta{display:flex;gap:10px;flex-wrap:wrap}.chip{padding:7px 10px;border-radius:999px;background:rgba(15,23,42,.05);color:var(--muted);font-size:.82rem;font-weight:700}.muted{color:var(--muted)}.small{font-size:.9rem}.stack{display:grid;gap:12px}.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:16px}.field{display:grid;gap:6px}.field label{font-size:.82rem;color:var(--muted);font-weight:700}.field input,.field select,.field textarea{width:100%;border-radius:16px;border:1px solid rgba(15,23,42,.08);padding:11px 12px;background:rgba(255,255,255,.74);font:inherit}.field textarea{min-height:96px;resize:vertical}.btn{border:none;border-radius:16px;padding:12px 14px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white}.btn.secondary{background:rgba(15,23,42,.06);color:var(--text)}.footer-note{padding:14px 18px;color:var(--muted)}
+    .principal .techy,.tv .techy,.tv .controls,.tv .branding,.tv .footer-note{display:none !important}.principal .detail-plain{display:block}.detail-plain{display:none}.compact .card{padding:14px;border-radius:20px}.tv .wrap{max-width:none;padding:16px}.tv .hero{grid-template-columns:1fr}.tv h1{font-size:clamp(2.4rem,5vw,5rem)}.tv .grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tv .card-title{font-size:1.4rem}.tv .badge{font-size:1rem}.tv .small{font-size:1.1rem}.tv .hero-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    @media (max-width: 1080px){.hero,.grid{grid-template-columns:1fr}.hero-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media (max-width: 720px){.wrap{padding:14px}.hero-grid,.controls,.tv .grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="panel hero">
+      <div class="hero-main">
+        <div class="hero-brand">
+          <div id="logoWrap" class="logo-wrap rounded"><div id="logoFallback" class="logo-fallback">SP</div><img id="logoImg" alt="Logo" hidden /></div>
+          <div>
+            <div class="eyebrow" id="eyebrow">SchoolPulse</div>
+            <h1 id="brandName">SchoolPulse</h1>
+            <p id="subtitle">District IT Status</p>
+          </div>
+        </div>
+        <div class="campus-tabs" id="campusTabs"></div>
+        <div class="hero-grid">
+          <div class="stat"><div class="eyebrow">Healthy</div><div class="v" id="statGreen">0</div></div>
+          <div class="stat"><div class="eyebrow">Needs Attention</div><div class="v" id="statYellow">0</div></div>
+          <div class="stat"><div class="eyebrow">Critical</div><div class="v" id="statRed">0</div></div>
+        </div>
+      </div>
+      <div class="hero-side">
+        <div class="overall panel">
+          <div class="overall-badge"><span class="eyebrow">Today’s IT Health Score</span><span id="overallStatusPill" class="status-pill yellow">Monitoring</span></div>
+          <div class="score">
+            <div class="score-ring" id="scoreRing" style="--score:84"><div class="score-ring-inner"><div><div class="score-number" id="healthScore">84</div><div class="score-label">Health</div></div></div></div>
+            <div class="stack">
+              <div><strong id="campusNameLabel">District</strong><div class="muted small" id="generatedAt">Waiting for first check…</div></div>
+              <div class="small muted" id="healthNarrative">Simple, principal-friendly status for your district systems.</div>
+              <div class="small muted techy">Display targets: front office TVs, principal dashboards, internal webpage</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel incident" id="incidentBanner">
+      <div class="incident-main">
+        <div class="incident-title" id="incidentTitle">No active incident</div>
+        <div class="incident-meta" id="incidentMeta">SchoolPulse is monitoring normally.</div>
+      </div>
+      <div class="incident-level watch" id="incidentLevel">Watch</div>
+    </section>
+
+    <section class="grid" id="serviceGrid"></section>
+
+    <section class="grid branding">
+      <div class="panel controls">
+        <div class="field"><label>Admin Token</label><input id="adminToken" type="password" placeholder="1234" /></div>
+        <div class="field"><label>Logo Shape</label><select id="logoShape"><option value="rounded">Rounded</option><option value="circle">Circle</option><option value="square">Square</option></select></div>
+        <div class="field"><label>Brand Name</label><input id="brandNameInput" placeholder="SchoolPulse" /></div>
+        <div class="field"><label>Subtitle</label><input id="subtitleInput" placeholder="District IT Status" /></div>
+        <div class="field"><label>Accent</label><input id="accentColor" type="color" value="#f97316" /></div>
+        <div class="field"><label>Accent 2</label><input id="accent2Color" type="color" value="#fb7185" /></div>
+        <div class="field"><label>Logo Upload</label><input id="logoFile" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" /></div>
+        <div class="field"><label>Compact Cards</label><select id="compactCards"><option value="false">Comfortable</option><option value="true">Compact</option></select></div>
+        <button class="btn" id="saveBrandingBtn">Save Branding</button>
+        <button class="btn secondary" id="refreshNowBtn">Run Checks Now</button>
+      </div>
+      <div class="panel controls">
+        <div class="field" style="grid-column:1/-1"><label>Post Announcement</label><input id="annTitle" placeholder="Scheduled maintenance tonight" /></div>
+        <div class="field" style="grid-column:1/-1"><label>Message</label><textarea id="annBody" placeholder="Wireless controller updates scheduled after hours."></textarea></div>
+        <div class="field"><label>Priority</label><select id="annPriority"><option value="green">Green</option><option value="yellow">Yellow</option><option value="red">Red</option></select></div>
+        <div class="field"><label>Plugin System</label><div class="small muted" id="pluginSummary">Loading plugin summary…</div></div>
+        <button class="btn" id="postAnnBtn">Post Announcement</button>
+      </div>
+    </section>
+
+    <div class="footer-note" id="footerNote">One-page layout, plugin-powered checks, and incident detection — without adding chart clutter.</div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const tvMode = params.get('tv') === '1';
+    const principalMode = params.get('view') === 'principal';
+    let activeCampus = params.get('campus') || 'district';
+    let currentStatus = null;
+    let currentSettings = null;
+    let announcements = [];
+    let logoDataUrl = '';
+
+    if (tvMode) document.body.classList.add('tv');
+    if (principalMode) document.body.classList.add('principal');
+
+    const serviceGrid = document.getElementById('serviceGrid');
+    const campusTabs = document.getElementById('campusTabs');
+
+    async function fetchJson(url, options) {
+      const res = await fetch(url, options);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    }
+
+    function statusLabel(status, category='service') {
+      if (principalMode) {
+        if (category === 'queue') return status === 'green' ? 'Queue Healthy' : status === 'yellow' ? 'Queue Elevated' : 'Queue Backlog';
+        return status === 'green' ? 'Working' : status === 'yellow' ? 'Limited' : 'Down';
+      }
+      return status === 'green' ? 'Healthy' : status === 'yellow' ? 'Needs Attention' : 'Critical';
+    }
+
+    function humanDetail(service) {
+      if (!principalMode) return service.detail || '';
+      if (service.category === 'queue') return `${service.meta?.openTickets ?? 0} active tickets.`;
+      if (service.id === 'wifi') return service.status === 'green' ? 'Wireless is available across monitored campuses.' : 'Wireless access may be limited in one or more areas.';
+      if (service.id === 'phones') return service.status === 'green' ? 'Phones are available.' : 'Phone calling may be affected.';
+      if (service.id === 'printers') return service.status === 'green' ? 'Campus printer access looks normal.' : 'Some print devices may need attention.';
+      return service.status === 'green' ? 'No issue detected.' : service.status === 'yellow' ? 'There may be a limited impact.' : 'Service disruption detected.';
+    }
+
+    function servicesForCampus() {
+      if (!currentStatus) return [];
+      return (currentStatus.services || []).filter((svc) => (svc.campuses || []).includes(activeCampus) || (svc.campuses || []).includes('district'));
+    }
+
+    function campusState() {
+      return currentStatus?.campusStates?.[activeCampus] || currentStatus?.campusStates?.district || null;
+    }
+
+    function renderTabs() {
+      campusTabs.innerHTML = '';
+      (currentStatus?.campuses || []).forEach((campus) => {
+        const btn = document.createElement('button');
+        btn.className = `tab${campus.id === activeCampus ? ' active' : ''}`;
+        const score = currentStatus?.campusStates?.[campus.id]?.healthScore;
+        btn.textContent = score ? `${campus.name} · ${score}` : campus.name;
+        btn.onclick = () => {
+          activeCampus = campus.id;
+          const next = new URL(location.href);
+          next.searchParams.set('campus', activeCampus);
+          history.replaceState({}, '', next);
+          render();
+        };
+        campusTabs.appendChild(btn);
+      });
+    }
+
+    function renderHero() {
+      const campus = campusState();
+      const summary = campus?.summary || {green:0,yellow:0,red:0};
+      document.getElementById('statGreen').textContent = summary.green || 0;
+      document.getElementById('statYellow').textContent = summary.yellow || 0;
+      document.getElementById('statRed').textContent = summary.red || 0;
+      document.getElementById('campusNameLabel').textContent = campus?.name || 'District';
+      document.getElementById('generatedAt').textContent = currentStatus?.generatedAt ? `Updated ${new Date(currentStatus.generatedAt).toLocaleTimeString([], {hour:'numeric', minute:'2-digit'})}` : 'Waiting for first check…';
+      const score = campus?.healthScore ?? currentStatus?.overallHealth ?? 0;
+      document.getElementById('healthScore').textContent = score;
+      document.getElementById('scoreRing').style.setProperty('--score', score);
+      document.getElementById('healthNarrative').textContent = score >= 92 ? 'District systems look strong right now.' : score >= 80 ? 'A few issues need attention, but most services are healthy.' : 'There is a meaningful service impact that deserves attention.';
+      const pill = document.getElementById('overallStatusPill');
+      const status = campus?.overallStatus || currentStatus?.overallStatus || 'yellow';
+      pill.className = `status-pill ${status}`;
+      pill.textContent = statusLabel(status);
+    }
+
+    function renderIncident() {
+      const banner = document.getElementById('incidentBanner');
+      const incidents = (currentStatus?.incidents || []).filter((incident) => {
+        if (!incident.serviceId) return true;
+        const svc = (currentStatus.services || []).find((s) => s.id === incident.serviceId);
+        return !svc || (svc.campuses || []).includes(activeCampus) || (svc.campuses || []).includes('district');
+      });
+      const incident = incidents[0];
+      if (!incident) {
+        banner.classList.remove('show');
+        return;
+      }
+      banner.classList.add('show');
+      document.getElementById('incidentTitle').textContent = incident.title;
+      document.getElementById('incidentMeta').textContent = `${incident.detail} · Impact: ${incident.impact} · Confidence: ${incident.confidence}`;
+      const level = document.getElementById('incidentLevel');
+      level.className = `incident-level ${incident.level}`;
+      level.textContent = incident.level === 'critical' ? 'Critical' : incident.level === 'warning' ? 'Warning' : 'Watch';
+    }
+
+    function metaChips(service) {
+      const chips = [];
+      if (service.id === 'wifi' && service.meta) {
+        if (service.meta.apsOnline != null) chips.push(`${service.meta.apsOnline} APs online`);
+        if (service.meta.apsOffline != null) chips.push(`${service.meta.apsOffline} APs offline`);
+      }
+      if (service.id === 'phones' && service.meta) {
+        if (service.meta.handsetsRegistered != null) chips.push(`${service.meta.handsetsRegistered} handsets`);
+        if (service.meta.trunksUp != null || service.meta.trunksDown != null) chips.push(`Trunks ${service.meta.trunksUp ?? 'n/a'}/${service.meta.trunksDown ?? 'n/a'}`);
+      }
+      if (service.id === 'helpdesk' && service.meta) {
+        chips.push(`${service.meta.openTickets ?? 0} open tickets`);
+        if (service.meta.waitingOnCustomer) chips.push(`${service.meta.waitingOnCustomer} waiting on customer`);
+        if (service.meta.waitingOnYou) chips.push(`${service.meta.waitingOnYou} waiting on you`);
+        if (service.meta.waitingOnParts) chips.push(`${service.meta.waitingOnParts} waiting on parts`);
+      }
+      if (service.id === 'printers' && service.meta) {
+        if (service.meta.availablePrinters) chips.push(`${service.meta.availablePrinters.length} queues visible`);
+        if (service.meta.offlineQueues?.length) chips.push(`${service.meta.offlineQueues.length} missing`);
+      }
+      return chips;
+    }
+
+    function renderServices() {
+      const services = servicesForCampus();
+      serviceGrid.innerHTML = '';
+      services.forEach((service) => {
+        const card = document.createElement('section');
+        card.className = 'panel card';
+        const chips = metaChips(service).map((chip) => `<span class="chip">${chip}</span>`).join('');
+        card.innerHTML = `
+          <div class="card-head">
+            <div>
+              <div class="card-title">${service.name}</div>
+              <div class="small muted techy">Plugin: ${service.pluginName}</div>
+            </div>
+            <div class="badge ${service.status}">${statusLabel(service.status, service.category)}</div>
+          </div>
+          <div class="small">${humanDetail(service)}</div>
+          <div class="small muted techy">${service.detail || ''}</div>
+          <div class="meta">${chips}</div>
+        `;
+        serviceGrid.appendChild(card);
+      });
+      if (!services.length) {
+        serviceGrid.innerHTML = '<section class="panel card"><div class="card-title">No services mapped to this campus yet.</div><div class="small muted">Add campus scoping in config/services.json when you are ready.</div></section>';
+      }
+    }
+
+    function applySettings(settings) {
+      currentSettings = settings;
+      document.documentElement.style.setProperty('--accent', settings.accent);
+      document.documentElement.style.setProperty('--accent2', settings.accent2);
+      document.documentElement.style.setProperty('--surface', settings.surface);
+      document.documentElement.style.setProperty('--surface-tint', settings.surfaceTint);
+      document.documentElement.style.setProperty('--text', settings.text);
+      document.documentElement.style.setProperty('--muted', settings.muted);
+      document.documentElement.style.setProperty('--bg1', settings.bg1);
+      document.documentElement.style.setProperty('--bg2', settings.bg2);
+      document.documentElement.style.setProperty('--bg3', settings.bg3);
+      document.getElementById('brandName').textContent = settings.brandName;
+      document.getElementById('subtitle').textContent = settings.subtitle;
+      document.getElementById('eyebrow').textContent = settings.brandName;
+      document.getElementById('brandNameInput').value = settings.brandName;
+      document.getElementById('subtitleInput').value = settings.subtitle;
+      document.getElementById('accentColor').value = settings.accent;
+      document.getElementById('accent2Color').value = settings.accent2;
+      document.getElementById('logoShape').value = settings.logoShape || 'rounded';
+      document.getElementById('compactCards').value = settings.compactCards ? 'true' : 'false';
+      logoDataUrl = settings.logoDataUrl || '';
+      const wrap = document.getElementById('logoWrap');
+      wrap.className = `logo-wrap ${settings.logoShape || 'rounded'}`;
+      const img = document.getElementById('logoImg');
+      const fallback = document.getElementById('logoFallback');
+      if (logoDataUrl) { img.src = logoDataUrl; img.hidden = false; fallback.hidden = true; }
+      else { img.hidden = true; fallback.hidden = false; fallback.textContent = (settings.brandName || 'SP').slice(0,2).toUpperCase(); }
+      document.body.classList.toggle('compact', !!settings.compactCards);
+    }
+
+    async function saveBranding() {
+      const adminToken = document.getElementById('adminToken').value.trim();
+      const body = {
+        brandName: document.getElementById('brandNameInput').value.trim() || 'SchoolPulse',
+        subtitle: document.getElementById('subtitleInput').value.trim() || 'District IT Status',
+        accent: document.getElementById('accentColor').value,
+        accent2: document.getElementById('accent2Color').value,
+        logoShape: document.getElementById('logoShape').value,
+        compactCards: document.getElementById('compactCards').value === 'true'
+      };
+      if (logoDataUrl) body.logoDataUrl = logoDataUrl;
+      const r = await fetch('/api/settings', { method:'POST', headers:{ 'Content-Type':'application/json', 'x-admin-token': adminToken }, body: JSON.stringify(body) });
+      if (!r.ok) throw new Error(`Save failed (${r.status})`);
+      applySettings(await r.json());
+      alert('Branding saved.');
+    }
+
+    async function runChecksNow() {
+      const adminToken = document.getElementById('adminToken').value.trim();
+      const r = await fetch('/api/checks/run', { method:'POST', headers:{ 'x-admin-token': adminToken } });
+      if (!r.ok) throw new Error(`Run failed (${r.status})`);
+      await loadAll();
+    }
+
+    async function postAnnouncement() {
+      const adminToken = document.getElementById('adminToken').value.trim();
+      const payload = { title: document.getElementById('annTitle').value.trim(), body: document.getElementById('annBody').value.trim(), priority: document.getElementById('annPriority').value };
+      const r = await fetch('/api/announcements', { method:'POST', headers:{ 'Content-Type':'application/json', 'x-admin-token': adminToken }, body: JSON.stringify(payload) });
+      if (!r.ok) throw new Error(`Announcement failed (${r.status})`);
+      document.getElementById('annTitle').value = ''; document.getElementById('annBody').value = '';
+      await loadAll();
+    }
+
+    async function loadAll() {
+      const [status, settings, pluginData] = await Promise.all([
+        fetchJson('/api/status'),
+        fetchJson('/api/settings'),
+        fetchJson('/api/plugins').catch(() => ({ plugins: [] }))
+      ]);
+      currentStatus = status;
+      applySettings(settings);
+      document.getElementById('pluginSummary').textContent = (pluginData.plugins || []).filter(p => p.enabled !== false).map(p => p.name || p.id).join(' • ');
+      render();
+    }
+
+    function render() {
+      renderTabs();
+      renderHero();
+      renderIncident();
+      renderServices();
+    }
+
+    document.getElementById('saveBrandingBtn').onclick = () => saveBranding().catch((e) => alert(e.message));
+    document.getElementById('refreshNowBtn').onclick = () => runChecksNow().catch((e) => alert(e.message));
+    document.getElementById('postAnnBtn').onclick = () => postAnnouncement().catch((e) => alert(e.message));
+    document.getElementById('logoFile').addEventListener('change', async (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      logoDataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(file);
+      });
+    });
+
+    loadAll().catch((e) => { document.getElementById('footerNote').textContent = `Unable to load SchoolPulse data: ${e.message}`; });
+    setInterval(() => loadAll().catch(() => {}), tvMode ? 15000 : 30000);
+  </script>
+</body>
+</html>
