@@ -1,5 +1,4 @@
 # SchoolPulse
-# SchoolPulse
 
 ![Version](https://img.shields.io/badge/version-0.1.0-orange)
 ![Node](https://img.shields.io/badge/node-%3E%3D18-green)
