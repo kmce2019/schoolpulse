@@ -1,144 +1,434 @@
 # SchoolPulse
 
-SchoolPulse is a self-hosted district IT status dashboard for Debian or Ubuntu. It is designed for front office TVs, principal dashboards, and an internal web page that answers the question: **"Is the network down or just my classroom?"**
+SchoolPulse is a self-hosted IT status dashboard built for school districts.
 
-## What this MVP includes
+It gives staff, principals, front offices, and IT teams a clean view of district technology health without forcing them to understand every technical detail behind the scenes.
 
-- Internet status with ping, internal HTTP, and gateway checks
-- UniFi reachability, plus optional AP online/offline counts when you provide a controller-specific devices endpoint
-- Google public service checks
-- 3CX reachability now, with a hook for future handset/trunk metrics
-- Linux-side printer share visibility checks against your Windows print server
-- NeetoDesk ticket count monitoring
-- Local announcements panel
-- Manual refresh with admin token
-- JSON-based persistence for announcements and recent history
-- systemd unit and install script
+## What SchoolPulse does
 
-## Why some integrations are marked optional
+SchoolPulse can display the live status of district systems such as:
 
-A few of your systems support richer APIs, but the exact endpoint and auth flow vary by platform version and local configuration:
+- Internet / WAN
+- WiFi / wireless infrastructure
+- Google services
+- SIS
+- PBX / phone system
+- printer queues
+- helpdesk queue
+- district announcements
 
-- UniFi publishes version-specific API docs inside **UniFi Network > Settings > Control Plane > Integrations**, and the official docs say that is the right place to retrieve the localized Network API documentation. citeturn436626search0
-- 3CX v20 exposes the Configuration API through a client application / token flow, not just a basic username/password scrape. Their official docs describe creating a client application, assigning permissions, and using tokens for access. citeturn436626search1turn436626search7
-- NeetoDesk’s API uses an `X-Api-Key` header according to the official API docs. citeturn436626search2turn436626search5
+It is designed to work well on:
 
-So this package gives you a stable, running MVP now and leaves clean extension points where your environment-specific endpoint details can be dropped in later.
+- front office TVs
+- principal dashboards
+- internal staff webpages
+- IT NOC-style displays
 
-## Quick start
+## Current feature set
 
-```bash
-sudo apt update
-sudo apt install -y nodejs npm smbclient
-sudo mkdir -p /opt/schoolpulse
-sudo chown $USER:$USER /opt/schoolpulse
-cd /opt/schoolpulse
-```
+- One-page status dashboard
+- Green / yellow / red service health
+- IT Health Score
+- Principal-friendly simplified view
+- TV / kiosk mode
+- Campus tabs
+- Branding controls
+- Logo upload
+- Theme colors
+- Helpdesk integration
+- Basic incident detection
+- Plugin-ready architecture
 
-Copy the project files into `/opt/schoolpulse`, then:
+## Suggested repo structure
 
-```bash
-cp .env.example .env
-nano .env
-node server.js
-```
-
-Open:
+This structure keeps SchoolPulse simple now, while making it easier to grow later.
 
 ```text
-http://YOUR_SERVER_IP:3030
+schoolpulse/
+├── README.md
+├── .gitignore
+├── .env.example
+├── package.json
+├── package-lock.json
+│
+├── server.js
+├── app/
+│   ├── config/
+│   │   ├── campuses.json
+│   │   ├── plugins.json
+│   │   ├── services.json
+│   │   └── theme.default.json
+│   │
+│   ├── core/
+│   │   ├── status-engine.js
+│   │   ├── incident-engine.js
+│   │   ├── health-score.js
+│   │   ├── plugin-loader.js
+│   │   ├── campus-filter.js
+│   │   └── auth.js
+│   │
+│   ├── plugins/
+│   │   ├── internet/
+│   │   │   ├── index.js
+│   │   │   └── config.schema.json
+│   │   ├── unifi/
+│   │   │   ├── index.js
+│   │   │   └── config.schema.json
+│   │   ├── threecx/
+│   │   │   ├── index.js
+│   │   │   └── config.schema.json
+│   │   ├── printers/
+│   │   │   ├── index.js
+│   │   │   └── config.schema.json
+│   │   ├── neetodesk/
+│   │   │   ├── index.js
+│   │   │   └── config.schema.json
+│   │   └── google/
+│   │       ├── index.js
+│   │       └── config.schema.json
+│   │
+│   ├── routes/
+│   │   ├── api-status.js
+│   │   ├── api-settings.js
+│   │   ├── api-history.js
+│   │   ├── api-campuses.js
+│   │   └── api-announcements.js
+│   │
+│   ├── services/
+│   │   ├── settings-store.js
+│   │   ├── history-store.js
+│   │   ├── announcements-store.js
+│   │   └── logger.js
+│   │
+│   └── utils/
+│       ├── http.js
+│       ├── json.js
+│       ├── time.js
+│       └── normalize.js
+│
+├── public/
+│   ├── index.html
+│   ├── app.js
+│   ├── styles.css
+│   └── assets/
+│
+├── data/
+│   ├── announcements.json
+│   ├── history.json
+│   └── settings.json
+│
+├── systemd/
+│   └── schoolpulse.service
+│
+├── scripts/
+│   ├── install.sh
+│   ├── backup.sh
+│   └── update.sh
+│
+└── docs/
+    ├── architecture.md
+    ├── plugins.md
+    ├── incidents.md
+    └── screenshots/
 ```
 
-## Production install
+## Why this structure works
 
-From inside the extracted project directory:
+### `app/core`
+This is where the real SchoolPulse logic should live.
+
+Examples:
+
+- status aggregation
+- health-score calculations
+- incident detection
+- plugin loading
+- campus filtering
+
+This keeps that logic out of `server.js`, which should stay small.
+
+### `app/plugins`
+Each integration gets its own folder and standard interface.
+
+That means each plugin can return a common result like:
+
+```js
+{
+  id: "wifi",
+  name: "WiFi",
+  status: "green",
+  detail: "28 of 30 APs online.",
+  meta: {
+    totalAps: 30,
+    onlineAps: 28
+  }
+}
+```
+
+This makes it easy to add future integrations without rewriting the whole app.
+
+### `app/routes`
+Separating routes keeps the API clean and easier to debug.
+
+Example routes:
+
+- `/api/status`
+- `/api/settings`
+- `/api/history`
+- `/api/campuses`
+- `/api/announcements`
+
+### `app/services`
+This is where file-backed or database-backed helpers should live.
+
+Examples:
+
+- saving settings
+- reading history
+- loading announcements
+- logging events
+
+### `public`
+Right now SchoolPulse works great as a simple one-page app. Keeping `index.html`, `app.js`, and `styles.css` separate will make future UI changes easier without overcomplicating the stack.
+
+## Recommended plugin pattern
+
+Each plugin should export one async function:
+
+```js
+module.exports = async function runPlugin(context) {
+  return {
+    id: "internet",
+    name: "Internet",
+    status: "green",
+    detail: "Gateway reachable. WAN latency is healthy.",
+    meta: {
+      latencyMs: 12
+    }
+  };
+};
+```
+
+### Plugin context example
+
+```js
+{
+  env,
+  config,
+  campus,
+  now,
+  helpers
+}
+```
+
+### Why this helps
+
+It allows SchoolPulse to load only the plugins you enable, and it makes each service easy to test independently.
+
+## Recommended incident model
+
+Incidents should be generated separately from raw service checks.
+
+Example:
+
+- Internet service red for 3 checks in a row
+- WiFi service yellow on multiple campuses
+- PBX reachable but trunk down
+- ticket count spikes suddenly
+
+Then SchoolPulse can show a single clean banner such as:
+
+- Probable internet outage
+- Wireless degradation detected
+- Phone service disruption
+- Elevated helpdesk backlog
+
+This keeps the dashboard useful for non-technical viewers.
+
+## Recommended health score model
+
+Keep the Health Score simple.
+
+Suggested scoring:
+
+- green = 100
+- yellow = 70
+- red = 0
+
+Then average the active services in the current view.
+
+Example:
+
+- Internet: green
+- WiFi: green
+- Phones: yellow
+- Helpdesk: green
+- Printers: green
+
+Health Score:
+
+```text
+(100 + 100 + 70 + 100 + 100) / 5 = 94
+```
+
+That gives school leaders a fast summary without reading every card.
+
+## Recommended simple UI philosophy
+
+Keep the layout simple and readable.
+
+Top to bottom:
+
+1. Header
+   - logo
+   - district name
+   - IT Health Score
+   - active incident banner
+
+2. Campus tabs
+   - District
+   - High School
+   - Junior High
+   - Elementary
+
+3. Main service cards
+   - Internet
+   - WiFi
+   - Phones
+   - Printers
+   - Helpdesk
+   - Google
+   - SIS
+
+4. Announcement strip
+   - maintenance
+   - outages
+   - reminders
+
+5. Optional admin drawer
+   - branding
+   - theme colors
+   - logo upload
+   - plugin enable/disable
+
+This keeps the page clean even as features expand.
+
+## Current integrations
+
+SchoolPulse is currently well-positioned to support plugins for:
+
+- Internet / WAN
+- UniFi
+- 3CX
+- printer queues
+- NeetoDesk
+- Google services
+- SIS
+- ClassLink
+- backups
+- cameras / NVR
+- Chromebook fleet health
+
+## Suggested Git hygiene
+
+Use a `.gitignore` like this:
+
+```gitignore
+.env
+node_modules
+*.log
+data/history.json
+data/announcements.json
+data/settings.json
+uploads/
+```
+
+Keep real secrets out of the repo.
+
+## Example `.env.example`
+
+```env
+PORT=3030
+HOST=0.0.0.0
+
+ADMIN_TOKEN=YOUR_ADMIN_TOKEN
+
+INTERNET_PING_TARGET=8.8.8.8
+INTERNET_HTTP_TARGET=https://example.org
+INTERNET_GATEWAY=10.0.0.1
+
+UNIFI_BASE_URL=https://unifi.example.org
+UNIFI_API_KEY=YOUR_UNIFI_API_KEY
+
+THREECX_BASE_URL=https://phones.example.org
+THREECX_USERNAME=YOUR_3CX_USERNAME
+THREECX_PASSWORD=YOUR_3CX_PASSWORD
+
+NEETODESK_BASE_URL=https://example.neetodesk.com
+NEETODESK_API_KEY=YOUR_NEETODESK_API_KEY
+NEETODESK_OPEN_TICKETS_ENDPOINT=/api/v1/public/tickets
+
+PRINTER_SERVER=g-gisd02
+```
+
+## Deployment notes
+
+Current deployment target:
+
+- Debian or Ubuntu
+- Node.js via systemd
+- no Docker required
+- internal LAN deployment
+- browser-based UI
+
+Basic deploy flow:
 
 ```bash
-sudo ./scripts/install.sh
-sudo nano /opt/schoolpulse/.env
+sudo systemctl stop schoolpulse
+sudo rsync -av --delete ./ /opt/schoolpulse/
+sudo systemctl daemon-reload
 sudo systemctl restart schoolpulse
 sudo systemctl status schoolpulse
 ```
 
-## Important env values to fill in
+## Future roadmap ideas
 
-### Internet
+- More plugin integrations
+- Better incident grouping
+- Alerting by email or webhook
+- Theme presets
+- Better principal summaries
+- District health history snapshots
+- Auto-discovery for printers and devices
+- Plugin enable/disable UI
+- Authenticated admin settings panel
+- Lightweight database backend if file storage becomes limiting
 
-- `INTERNET_PUBLIC_IP`
-- `INTERNET_PING_TARGET`
-- `INTERNET_HTTP_TARGET`
-- `INTERNET_GATEWAY`
+## Why SchoolPulse matters
 
-### UniFi
+Most school districts have all the data they need to understand technology health, but it is spread across:
 
-- `UNIFI_BASE_URL`
-- `UNIFI_API_KEY`
-- `UNIFI_DEVICES_ENDPOINT` for actual AP counts
+- WiFi controllers
+- helpdesk systems
+- phone systems
+- status pages
+- print servers
+- admin tools
 
-If `UNIFI_DEVICES_ENDPOINT` is blank, SchoolPulse still checks whether the controller is reachable.
+SchoolPulse turns that into one clean district-facing page that answers the question:
 
-### SIS
+**"Is the issue just me, or is it a real district problem?"**
 
-Fill these later when you have them:
+## License
 
-- `SIS_NAME`
-- `SIS_URL`
-- `SIS_API_KEY`
+Choose the license that best fits your goals.
 
-### 3CX
+Examples:
 
-For now the package checks web reachability through `THREECX_URL`.
+- MIT if you want it open and flexible
+- Proprietary if this stays internal to Forge IT
+- Private GitHub repo if you want controlled sharing only
 
-Later, once you create a proper 3CX API client/token, add:
+## Maintainer
 
-- `THREECX_XAPI_BASE`
-- `THREECX_XAPI_TOKEN`
-
-### Printers
-
-This Debian/Ubuntu MVP checks share visibility from Linux using `smbclient`.
-
-Fill:
-
-- `PRINT_SERVER_HOST`
-- `PRINT_SERVER_SMB_USERNAME`
-- `PRINT_SERVER_SMB_PASSWORD`
-- `PRINT_SERVER_DOMAIN` if applicable
-- `PRINT_QUEUES` separated by `|`
-
-This validates whether the configured queue shares are visible. Queue-depth and stuck-job counts would need either:
-
-- a small Windows helper on the print server, or
-- a more advanced RPC-based polling layer.
-
-### NeetoDesk
-
-Fill:
-
-- `NEETODESK_BASE_URL`
-- `NEETODESK_API_KEY`
-- `NEETODESK_OPEN_TICKETS_ENDPOINT`
-
-## API routes
-
-- `GET /api/status`
-- `GET /api/announcements`
-- `GET /api/history`
-- `POST /api/checks/run` with header `X-Admin-Token`
-- `POST /api/announcements` with header `X-Admin-Token`
-- `DELETE /api/announcements/:id` with header `X-Admin-Token`
-
-## Suggested next upgrades
-
-- Add your real UniFi devices endpoint from the local UniFi integration docs
-- Add 3CX token-based API polling for handsets and trunks
-- Add SIS when you have the URL and auth method
-- Add campus-specific views
-- Add historical charts for outages and ticket counts
-- Add email or SMS alerts when a status flips to yellow or red
-
-## Security notes
-
-- Do not commit your real `.env` file to Git
-- Use read-only service credentials wherever possible
-- Put the app behind Nginx or Caddy if exposing it internally on a standard HTTPS URL
+Built and maintained by Kevin Gardner / Forge IT.
