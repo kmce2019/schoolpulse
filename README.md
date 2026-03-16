@@ -433,8 +433,3 @@ Examples:
 
 Built and maintained by Kevin Gardner / Forge IT.
 
-<p align="center">
-  <img src="docs/banner.png" alt="SchoolPulse Banner" width="100%">
-</p>
-
-# SchoolPulse
