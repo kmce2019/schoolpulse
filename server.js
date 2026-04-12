@@ -21,15 +21,15 @@ const PLUGINS_FILE = './config/plugins.json';
 const defaultSettings = {
   brandName: 'SchoolPulse',
   subtitle: 'District IT Status',
-  accent: '#f97316',
-  accent2: '#fb7185',
+  accent: '#800000',
+  accent2: '#a52a2a',
   surface: '#ffffff',
   surfaceTint: '#f8fafc',
   text: '#0f172a',
   muted: '#64748b',
   bg1: '#eef2ff',
   bg2: '#f8fafc',
-  bg3: '#ffe4e6',
+  bg3: '#ffe4e4',
   logoDataUrl: '',
   logoShape: 'rounded',
   compactCards: false
@@ -73,6 +73,7 @@ async function runChecks() {
         pluginName: plugin.name || plugin.id
       });
     } catch (error) {
+      console.error(`Check failed for ${plugin.id}:`, error.message);
       services.push({
         id: plugin.id,
         name: plugin.name || plugin.id,
@@ -138,10 +139,6 @@ function computeHealthScore(services) {
   return Math.round(raw);
 }
 
-function computeHealthScoreForServices(services) {
-  return computeHealthScore(services);
-}
-
 function buildCampusStates(campuses, services) {
   const states = {};
   for (const campus of campuses) {
@@ -153,7 +150,7 @@ function buildCampusStates(campuses, services) {
       services: relevant.map((svc) => svc.id),
       summary,
       overallStatus: deriveOverallStatus(summary),
-      healthScore: computeHealthScoreForServices(relevant),
+      healthScore: computeHealthScore(relevant),
       principalLabel: principalLabel(deriveOverallStatus(summary))
     };
   }
