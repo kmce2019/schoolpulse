@@ -26,10 +26,10 @@
     .campus-tabs{display:flex;gap:10px;flex-wrap:wrap}.tab{border:none;background:rgba(255,255,255,.65);padding:10px 14px;border-radius:999px;font-weight:700;color:var(--muted);cursor:pointer}.tab.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white}
     .incident{padding:16px 18px;display:none;align-items:center;justify-content:space-between;gap:12px}.incident.show{display:flex}.incident-main{display:grid;gap:6px}.incident-title{font-weight:800;font-size:1.05rem}.incident-meta{font-size:.92rem;color:var(--muted)}.incident-level{padding:8px 12px;border-radius:999px;font-weight:800;font-size:.85rem}.incident-level.critical{background:rgba(255,59,48,.12);color:#a42318}.incident-level.warning{background:rgba(245,158,11,.14);color:#9a6700}.incident-level.watch{background:rgba(99,102,241,.12);color:#3730a3}
     .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{padding:18px;border-radius:24px;display:grid;gap:12px}.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.card-title{font-size:1.1rem;font-weight:800}.badge{padding:8px 12px;border-radius:999px;font-weight:800;font-size:.82rem}.badge.green{background:rgba(52,199,89,.12);color:#147a2d}.badge.yellow{background:rgba(245,158,11,.14);color:#9a6700}.badge.red{background:rgba(255,59,48,.12);color:#a42318}
-    .meta{display:flex;gap:10px;flex-wrap:wrap}.chip{padding:7px 10px;border-radius:999px;background:rgba(15,23,42,.05);color:var(--muted);font-size:.82rem;font-weight:700}.muted{color:var(--muted)}.small{font-size:.9rem}.stack{display:grid;gap:12px}.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:16px}.field{display:grid;gap:6px}.field label{font-size:.82rem;color:var(--muted);font-weight:700}.field input,.field select,.field textarea{width:100%;border-radius:16px;border:1px solid rgba(15,23,42,.08);padding:11px 12px;background:rgba(255,255,255,.74);font:inherit}.field textarea{min-height:96px;resize:vertical}.btn{border:none;border-radius:16px;padding:12px 14px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white}.btn.secondary{background:rgba(15,23,42,.06);color:var(--text)}.footer-note{padding:14px 18px;color:var(--muted)}
-    .principal .techy,.tv .techy,.tv .controls,.tv .branding,.tv .footer-note{display:none !important}.principal .detail-plain{display:block}.detail-plain{display:none}.compact .card{padding:14px;border-radius:20px}.tv .wrap{max-width:none;padding:16px}.tv .hero{grid-template-columns:1fr}.tv h1{font-size:clamp(2.4rem,5vw,5rem)}.tv .grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tv .card-title{font-size:1.4rem}.tv .badge{font-size:1rem}.tv .small{font-size:1.1rem}.tv .hero-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .meta{display:flex;gap:10px;flex-wrap:wrap}.chip{padding:7px 10px;border-radius:999px;background:rgba(15,23,42,.05);color:var(--muted);font-size:.82rem;font-weight:700}.muted{color:var(--muted)}.small{font-size:.9rem}.stack{display:grid;gap:12px}.footer-note{padding:14px 18px;color:var(--muted)}
+    .principal .techy,.tv .techy,.tv .footer-note{display:none !important}.principal .detail-plain{display:block}.detail-plain{display:none}.compact .card{padding:14px;border-radius:20px}.tv .wrap{max-width:none;padding:16px}.tv .hero{grid-template-columns:1fr}.tv h1{font-size:clamp(2.4rem,5vw,5rem)}.tv .grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tv .card-title{font-size:1.4rem}.tv .badge{font-size:1rem}.tv .small{font-size:1.1rem}.tv .hero-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
     @media (max-width: 1080px){.hero,.grid{grid-template-columns:1fr}.hero-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media (max-width: 720px){.wrap{padding:14px}.hero-grid,.controls,.tv .grid{grid-template-columns:1fr}}
+    @media (max-width: 720px){.wrap{padding:14px}.hero-grid,.tv .grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -76,28 +76,6 @@
 
     <section class="grid" id="serviceGrid"></section>
 
-    <section class="grid branding">
-      <div class="panel controls">
-        <div class="field"><label>Admin Token</label><input id="adminToken" type="password" placeholder="1234" /></div>
-        <div class="field"><label>Logo Shape</label><select id="logoShape"><option value="rounded">Rounded</option><option value="circle">Circle</option><option value="square">Square</option></select></div>
-        <div class="field"><label>Brand Name</label><input id="brandNameInput" placeholder="SchoolPulse" /></div>
-        <div class="field"><label>Subtitle</label><input id="subtitleInput" placeholder="District IT Status" /></div>
-        <div class="field"><label>Accent</label><input id="accentColor" type="color" value="#800000" /></div>
-        <div class="field"><label>Accent 2</label><input id="accent2Color" type="color" value="#a52a2a" /></div>
-        <div class="field"><label>Logo Upload</label><input id="logoFile" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" /></div>
-        <div class="field"><label>Compact Cards</label><select id="compactCards"><option value="false">Comfortable</option><option value="true">Compact</option></select></div>
-        <button class="btn" id="saveBrandingBtn">Save Branding</button>
-        <button class="btn secondary" id="refreshNowBtn">Run Checks Now</button>
-      </div>
-      <div class="panel controls">
-        <div class="field" style="grid-column:1/-1"><label>Post Announcement</label><input id="annTitle" placeholder="Scheduled maintenance tonight" /></div>
-        <div class="field" style="grid-column:1/-1"><label>Message</label><textarea id="annBody" placeholder="Wireless controller updates scheduled after hours."></textarea></div>
-        <div class="field"><label>Priority</label><select id="annPriority"><option value="green">Green</option><option value="yellow">Yellow</option><option value="red">Red</option></select></div>
-        <div class="field"><label>Plugin System</label><div class="small muted" id="pluginSummary">Loading plugin summary…</div></div>
-        <button class="btn" id="postAnnBtn">Post Announcement</button>
-      </div>
-    </section>
-
     <div class="footer-note" id="footerNote">One-page layout, plugin-powered checks, and incident detection — without adding chart clutter.</div>
   </div>
 
@@ -108,9 +86,6 @@
     let activeCampus = params.get('campus') || 'district';
     let currentStatus = null;
     let currentSettings = null;
-    let announcements = [];
-    let logoDataUrl = '';
-
     if (tvMode) document.body.classList.add('tv');
     if (principalMode) document.body.classList.add('principal');
 
@@ -268,64 +243,22 @@
       document.getElementById('brandName').textContent = settings.brandName;
       document.getElementById('subtitle').textContent = settings.subtitle;
       document.getElementById('eyebrow').textContent = settings.brandName;
-      document.getElementById('brandNameInput').value = settings.brandName;
-      document.getElementById('subtitleInput').value = settings.subtitle;
-      document.getElementById('accentColor').value = settings.accent;
-      document.getElementById('accent2Color').value = settings.accent2;
-      document.getElementById('logoShape').value = settings.logoShape || 'rounded';
-      document.getElementById('compactCards').value = settings.compactCards ? 'true' : 'false';
-      logoDataUrl = settings.logoDataUrl || '';
       const wrap = document.getElementById('logoWrap');
       wrap.className = `logo-wrap ${settings.logoShape || 'rounded'}`;
       const img = document.getElementById('logoImg');
       const fallback = document.getElementById('logoFallback');
-      if (logoDataUrl) { img.src = logoDataUrl; img.hidden = false; fallback.hidden = true; }
+      if (settings.logoDataUrl) { img.src = settings.logoDataUrl; img.hidden = false; fallback.hidden = true; }
       else { img.hidden = true; fallback.hidden = false; fallback.textContent = (settings.brandName || 'SP').slice(0,2).toUpperCase(); }
       document.body.classList.toggle('compact', !!settings.compactCards);
     }
 
-    async function saveBranding() {
-      const adminToken = document.getElementById('adminToken').value.trim();
-      const body = {
-        brandName: document.getElementById('brandNameInput').value.trim() || 'SchoolPulse',
-        subtitle: document.getElementById('subtitleInput').value.trim() || 'District IT Status',
-        accent: document.getElementById('accentColor').value,
-        accent2: document.getElementById('accent2Color').value,
-        logoShape: document.getElementById('logoShape').value,
-        compactCards: document.getElementById('compactCards').value === 'true'
-      };
-      if (logoDataUrl) body.logoDataUrl = logoDataUrl;
-      const r = await fetch('/api/settings', { method:'POST', headers:{ 'Content-Type':'application/json', 'x-admin-token': adminToken }, body: JSON.stringify(body) });
-      if (!r.ok) throw new Error(`Save failed (${r.status})`);
-      applySettings(await r.json());
-      alert('Branding saved.');
-    }
-
-    async function runChecksNow() {
-      const adminToken = document.getElementById('adminToken').value.trim();
-      const r = await fetch('/api/checks/run', { method:'POST', headers:{ 'x-admin-token': adminToken } });
-      if (!r.ok) throw new Error(`Run failed (${r.status})`);
-      await loadAll();
-    }
-
-    async function postAnnouncement() {
-      const adminToken = document.getElementById('adminToken').value.trim();
-      const payload = { title: document.getElementById('annTitle').value.trim(), body: document.getElementById('annBody').value.trim(), priority: document.getElementById('annPriority').value };
-      const r = await fetch('/api/announcements', { method:'POST', headers:{ 'Content-Type':'application/json', 'x-admin-token': adminToken }, body: JSON.stringify(payload) });
-      if (!r.ok) throw new Error(`Announcement failed (${r.status})`);
-      document.getElementById('annTitle').value = ''; document.getElementById('annBody').value = '';
-      await loadAll();
-    }
-
     async function loadAll() {
-      const [status, settings, pluginData] = await Promise.all([
+      const [status, settings] = await Promise.all([
         fetchJson('/api/status'),
-        fetchJson('/api/settings'),
-        fetchJson('/api/plugins').catch(() => ({ plugins: [] }))
+        fetchJson('/api/settings')
       ]);
       currentStatus = status;
       applySettings(settings);
-      document.getElementById('pluginSummary').textContent = (pluginData.plugins || []).filter(p => p.enabled !== false).map(p => p.name || p.id).join(' • ');
       render();
     }
 
@@ -335,18 +268,6 @@
       renderIncident();
       renderServices();
     }
-
-    document.getElementById('saveBrandingBtn').onclick = () => saveBranding().catch((e) => alert(e.message));
-    document.getElementById('refreshNowBtn').onclick = () => runChecksNow().catch((e) => alert(e.message));
-    document.getElementById('postAnnBtn').onclick = () => postAnnouncement().catch((e) => alert(e.message));
-    document.getElementById('logoFile').addEventListener('change', async (event) => {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-      logoDataUrl = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(file);
-      });
-    });
 
     loadAll().catch((e) => { document.getElementById('footerNote').textContent = `Unable to load SchoolPulse data: ${e.message}`; });
     setInterval(() => loadAll().catch(() => {}), tvMode ? 15000 : 30000);
